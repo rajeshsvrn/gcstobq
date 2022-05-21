@@ -1,0 +1,62 @@
+#*******************************************
+# Code Objective : to load a csv file from a cloud storage to big query table
+# Owned by https://www.travelandtech.net open for all
+# Written by : Alok Nand
+#*******************************************
+#****************************************************
+# STEP 1 - To import library needed for the operation
+#*****************************************************
+import airflow
+from datetime import timedelta, datetime
+from airflow import DAG
+from airflow.contrib.operators.bigquery_operator import BigQueryOperator
+from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+#****************************************************
+# STEP 2 - Default Argument
+#*****************************************************
+default_args = {
+'owner': 'Travel And Tech',
+'depends_on_past': False,
+'start_date': airflow.utils.dates.days_ago(1),
+'email': ['Your email address'],
+'email_on_failure': False,
+'email_on_retry': False,
+'retries': 2,
+'retry_delay': timedelta(minutes=2),
+}
+#****************************************************
+# STEP 3 - Define DAG: Set ID and assign default args and schedule interval
+#*****************************************************
+dag = DAG('A_file_load_from_bucket_to_bq',
+schedule_interval='0 0 * * *',
+default_args=default_args
+)
+#****************************************************
+# STEP 4 - # Config variables
+#*****************************************************
+BQ_CONN_ID = "bigquery_default"
+BQ_PROJECT = "halogen-data-344904"
+BQ_DATASET = "halogen-data-344904"
+#****************************************************
+# Step 5: write down the differnt task
+#*****************************************************
+# task to load CSV data from cloud storage to big query table.
+t1 = GoogleCloudStorageToBigQueryOperator(
+task_id='A_task_file_load_from_bucket_to_bq',
+bucket= 'thc_table_schemas',
+source_objects = ['dags/Postdata.csv'],
+schema_fields=[
+{'name': 'ID', 'type': 'STRING', 'mode': 'NULLABLE'},
+{'name': 'name', 'type': 'STRING', 'mode': 'NULLABLE'},
+{'name': 'post', 'type': 'STRING', 'mode': 'NULLABLE'},
+],
+destination_project_dataset_table='<Your Project id>.<your dataset name>.PostData',
+write_disposition='WRITE_TRUNCATE',
+google_cloud_storage_conn_id=BQ_CONN_ID,
+bigquery_conn_id=BQ_CONN_ID,
+dag = dag
+)
+#****************************************************
+# Setting up Dependencies
+#*****************************************************
+t1
