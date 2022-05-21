@@ -13,7 +13,7 @@ from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOper
 
 
 default_args = {
-'owner': 'Travel And Tech',
+'owner': 'Test',
 'depends_on_past': False,
 'start_date': airflow.utils.dates.days_ago(1),
 'email': 'rajeshsvrn@gmail.com',
