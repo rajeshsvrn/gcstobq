@@ -43,7 +43,7 @@ BQ_DATASET = "halogen-data-344904"
 t1 = GoogleCloudStorageToBigQueryOperator(
 task_id='A_task_file_load_from_bucket_to_bq',
 bucket= 'thc_table_schemas',
-source_objects = ['dags/Postdata.csv'],
+source_objects = ['dags/addresses.csv'],
 schema_fields=[
 {'name': 'ID', 'type': 'STRING', 'mode': 'NULLABLE'},
 {'name': 'name', 'type': 'STRING', 'mode': 'NULLABLE'},
